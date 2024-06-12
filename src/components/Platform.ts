@@ -1,12 +1,4 @@
-interface IPlatform {
-  context: CanvasRenderingContext2D;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-export default class Platform implements IPlatform {
+export default class Platform {
   context: CanvasRenderingContext2D;
   x: number;
   y: number;
