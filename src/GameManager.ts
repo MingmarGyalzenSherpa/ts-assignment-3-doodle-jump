@@ -314,7 +314,9 @@ export default class GameManager {
       this.platforms.forEach((platform) => {
         if (collisionDetection(this.player!, platform)) {
           this.player!.y = platform.y - this.player!.height;
-          this.player!.resetDy();
+          this.player!.resetDy(
+            this.player!.y < (1 / 3) * this.canvas.height ? -6 : -15
+          );
           this.updateScore(platform);
         }
       });

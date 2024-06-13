@@ -63,8 +63,8 @@ export default class Player {
     this.context.closePath();
   }
 
-  resetDy() {
-    this.dy = playerDy;
+  resetDy(newDy?: number) {
+    this.dy = newDy ? newDy : playerDy;
   }
 
   update() {
