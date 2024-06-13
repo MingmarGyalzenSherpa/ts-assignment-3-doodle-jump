@@ -64,6 +64,10 @@ li:nth-child(3) {
   font-weight: bold;
   margin-bottom: 30px;
 }
+.error-msg {
+  color: red;
+  display: none;
+}
 
 input {
   padding: 10px 20px;

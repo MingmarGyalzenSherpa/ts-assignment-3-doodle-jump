@@ -24,8 +24,15 @@ canvas.height = window.innerHeight - 10;
 canvas.style.border = "1px solid black";
 
 startBtn.addEventListener("click", () => {
+  let userName = username.value.trim();
+  let errorMsgEl = document.querySelector<HTMLDivElement>(".error-msg")!;
+
+  if (!userName) {
+    errorMsgEl.style.display = "block";
+    return;
+  }
   startScreen.style.display = "none";
   canvas.style.display = "block";
-  let name = username.value.trim();
+
   new GameManager(canvas!, name);
 });
