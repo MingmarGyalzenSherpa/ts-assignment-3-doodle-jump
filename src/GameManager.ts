@@ -98,7 +98,7 @@ export default class GameManager {
     this.platformBaseLineY = this.canvas.height - 2 * this.groundHeight;
 
     //the range for generating platform in y-axis
-    this.platformHorizontalGapRange = 100;
+    this.platformHorizontalGapRange = 20;
     this.platformMinimumGap = 40;
     //set score to 0
     this.score = 0;
@@ -180,6 +180,16 @@ export default class GameManager {
         let platformType = PlatformType.NORMAL;
         if (this.score! > 5000 && noOfPlatformPerRange === 1) {
           platformType = PlatformType.MOVING;
+        }
+        if (this.score! > 6000) {
+          let chances = Math.random();
+          if (chances <= 0.1 && noOfPlatformPerRange != 1) {
+            platformType = PlatformType.BREAK;
+          } else if (chances <= 0.6) {
+            platformType = PlatformType.MOVING;
+          } else {
+            platformType = PlatformType.NORMAL;
+          }
         }
         this.platforms!.push(
           new Platform(
@@ -403,7 +413,7 @@ export default class GameManager {
     if (this.player!.y < (1 / 3) * this.canvas.height) {
       this.platforms!.forEach((platform) => {
         if (this.player!.y > this.y + 100) {
-          platform.y += 10;
+          platform.y += 7;
         } else {
           platform.y += 20;
         }
@@ -411,6 +421,7 @@ export default class GameManager {
       if (this.ground) this.ground.y += 10;
       //reset platformBaseLine
       this.platformBaseLineY! += this.player!.y > this.y + 50 ? 10 : 20;
+      this.player!.gravity = 0.9;
     }
   }
 
@@ -430,7 +441,10 @@ export default class GameManager {
     //collision between player and platforms
     if (this.player!.dy >= 0) {
       this.platforms!.forEach((platform) => {
-        if (collisionDetection(this.player!, platform)) {
+        if (
+          platform.type != PlatformType.BREAK &&
+          collisionDetection(this.player!, platform)
+        ) {
           this.player!.y = platform.y - this.player!.height;
           this.player!.resetDy(
             this.player!.y < (1 / 3) * this.canvas.height ? -1 : -15

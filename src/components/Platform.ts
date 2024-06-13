@@ -43,12 +43,16 @@ export default class Platform {
 
   draw() {
     this.context.beginPath();
-    this.context.fillStyle = "black";
-
     if (this.type === PlatformType.GROUND) {
+      this.context.fillStyle = "black";
+    }
+    if (this.type === PlatformType.BREAK) {
+      this.context.fillStyle = "red";
+    }
+
+    if (this.type === PlatformType.GROUND || this.type === PlatformType.BREAK) {
       this.context.fillRect(this.x, this.y, this.width, this.height);
       this.context.closePath();
-
       return;
     }
 

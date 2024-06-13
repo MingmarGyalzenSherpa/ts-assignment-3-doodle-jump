@@ -1,4 +1,4 @@
-import { playerDy } from "../Constants/constants";
+import { playerDy, playerGravity } from "../Constants/constants";
 import { Movement } from "../utils/enum";
 import playerLeftImage from "../assets/blueL.png";
 import playerRightImage from "../assets/blueR.png";
@@ -65,6 +65,10 @@ export default class Player {
 
   resetDy(newDy?: number) {
     this.dy = newDy ? newDy : playerDy;
+  }
+
+  resetGravity() {
+    this.gravity = playerGravity;
   }
 
   update() {

@@ -15,4 +15,5 @@ export enum PlatformType {
   NORMAL = "Normal",
   MOVING = "Moving",
   GROUND = "Ground",
+  BREAK = "Break",
 }
