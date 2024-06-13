@@ -97,7 +97,7 @@ export default class GameManager {
     this.platformBaseLineY = this.canvas.height - 2 * this.groundHeight;
 
     //the range for generating platform in y-axis
-    this.platformHorizontalGapRange = 100;
+    this.platformHorizontalGapRange = 150;
     //set score to 0
     this.score = 0;
 
@@ -127,7 +127,7 @@ export default class GameManager {
     this.generatePlatform(-this.canvas.height);
 
     //increase the gap for other platforms
-    this.platformHorizontalGapRange = 90;
+    this.platformHorizontalGapRange = 100;
   };
 
   generatePlatform = (yMin: number) => {
@@ -145,6 +145,7 @@ export default class GameManager {
           this.platformBaseLineY! - this.platformHorizontalGapRange!,
           this.platformBaseLineY!
         );
+
         //if collides generate again
         while (
           this.platforms!.some((platform) => {
@@ -167,6 +168,9 @@ export default class GameManager {
           );
         }
 
+        //update baseline
+        this.platformBaseLineY = y;
+
         this.platforms!.push(
           new Platform(
             this.context,
@@ -177,7 +181,6 @@ export default class GameManager {
           )
         );
       }
-      this.platformBaseLineY! -= this.platformHorizontalGapRange!;
     }
   };
 
