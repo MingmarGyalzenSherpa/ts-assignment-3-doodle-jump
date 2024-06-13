@@ -30,7 +30,7 @@ export default class Player {
     this.height = height;
     this.dy = playerDy;
     this.dx = 5;
-    this.gravity = 0.9;
+    this.gravity = 0.7;
     this.hasLanded = false;
     this.movement = Movement.STATIONERY;
     this.image = new Image();
@@ -70,7 +70,6 @@ export default class Player {
   update() {
     this.y += this.dy;
     this.dy += this.gravity;
-    console.log({ dy: this.dy });
     if (this.movement === Movement.LEFT) {
       this.x -= this.dx;
     }
