@@ -183,7 +183,7 @@ export default class GameManager {
         }
         if (this.score! > 6000) {
           let chances = Math.random();
-          if (chances <= 0.1 && noOfPlatformPerRange != 1) {
+          if (chances <= 0.1 && noOfPlatformPerRange > 2) {
             platformType = PlatformType.BREAK;
           } else if (chances <= 0.6) {
             platformType = PlatformType.MOVING;
