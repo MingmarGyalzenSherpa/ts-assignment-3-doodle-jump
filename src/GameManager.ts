@@ -52,11 +52,6 @@ export default class GameManager {
     this.gameState = GameState.RUNNING;
 
     this.initialSetup();
-    // //on resize change canvas width
-    // document.addEventListener("resize", () => {
-    //   this.canvas.width = window.innerWidth;
-    //   this.canvas.height = window.innerHeight - 10;
-    // });
 
     //event listener for game
     document.addEventListener("keydown", (e) => {
@@ -140,7 +135,6 @@ export default class GameManager {
     );
     let x: number, y: number;
     while (this.platformBaseLineY! >= yMin) {
-      console.log("inside generate");
       for (let i = 1; i <= noOfPlatformPerRange; i++) {
         //get random X
         x = getRandomInt(this.x, this.canvas.width - this.playerWidth);
@@ -207,7 +201,6 @@ export default class GameManager {
 
   draw = () => {
     //set ground to canvas width
-    // this.ground.width = this.canvas.width;
 
     switch (this.gameState) {
       case GameState.WAITING:
@@ -244,10 +237,7 @@ export default class GameManager {
     //draw player
     this.player!.draw();
 
-    console.log(this.offsetY);
     if (this.offsetY! > 0) {
-      console.log("hey");
-      console.log(this.platforms);
       this.platforms?.forEach((platform) => {
         platform.y -= 8;
       });
@@ -303,7 +293,7 @@ export default class GameManager {
       return;
     }
 
-    //if there is then find if the user is already there and leaderbord score is higher than current
+    //if there is then find if the user is already there and leaderboard score is higher than current
     leaderBoardArr = JSON.parse(leaderBoardJSON);
     if (
       leaderBoardArr.some(
@@ -479,7 +469,6 @@ export default class GameManager {
   };
 
   updateScore(platform: Platform) {
-    console.log(platform);
     if (this.scoreBasis!.y < platform.y) return;
 
     let diff = Math.abs(platform.y - this.scoreBasis!.y);
