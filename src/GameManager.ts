@@ -272,9 +272,8 @@ export default class GameManager {
     );
 
     //calculate  score
-    if (this.offsetY! < 0) {
-      this.calculateScore();
-    }
+
+    this.calculateScore();
   };
 
   calculateScore = () => {
@@ -294,30 +293,45 @@ export default class GameManager {
     }
 
     //if there is then find if the user is already there and leaderboard score is higher than current
+    console.log("before parsing");
+    console.log(leaderBoardJSON);
     leaderBoardArr = JSON.parse(leaderBoardJSON);
+    console.log(scoreDetail.score);
+    console.log("score in array:");
+    console.log(
+      leaderBoardArr.filter((info) => info.name === scoreDetail.name)
+    );
     if (
-      leaderBoardArr.some(
+      !leaderBoardArr.some(
         (scoreInfo) =>
           scoreDetail.name === scoreInfo.name &&
           scoreDetail.score < scoreInfo.score
       )
-    )
-      return;
+    ) {
+      console.log("after checking");
+      // if cur score is higher ,remove the scoreInfo
+      leaderBoardArr = leaderBoardArr.filter(
+        (scoreInfo) => scoreDetail.name != scoreInfo.name
+      );
+      console.log("after filter");
+      console.log(leaderBoardArr);
+      leaderBoardArr.push(scoreDetail);
+      console.log("after adding new");
+      console.log(leaderBoardArr);
 
-    // if cur score is higher ,remove the scoreInfo
-    leaderBoardArr = leaderBoardArr.filter(
-      (scoreInfo) => scoreDetail.name != scoreInfo.name
-    );
-    leaderBoardArr.push(scoreDetail);
+      leaderBoardArr.sort(
+        (scoreInfo1, scoreInfo2) => scoreInfo2.score - scoreInfo1.score
+      );
 
-    leaderBoardArr.sort(
-      (scoreInfo1, scoreInfo2) => scoreInfo2.score - scoreInfo1.score
-    );
+      console.log("after sorting");
+      console.log(leaderBoardArr);
 
-    leaderBoardArr = leaderBoardArr.filter((_, i) => i < 10);
+      leaderBoardArr = leaderBoardArr.filter((_, i) => i < 10);
+      localStorage.setItem("leaderboard", JSON.stringify(leaderBoardArr));
 
-    localStorage.setItem("leaderboard", JSON.stringify(leaderBoardArr));
-
+      console.log("after filtering to 10");
+      console.log(leaderBoardArr);
+    }
     leaderBoardArr.forEach((scoreInfo) => {
       let listEl = document.createElement("li");
       listEl.textContent = `${scoreInfo.name} ${scoreInfo.score}`;
