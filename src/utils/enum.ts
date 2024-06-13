@@ -10,3 +10,9 @@ export enum Movement {
   RIGHT = "Right",
   STATIONERY = "Stationery",
 }
+
+export enum PlatformType {
+  NORMAL = "Normal",
+  MOVING = "Moving",
+  GROUND = "Ground",
+}

@@ -1,9 +1,9 @@
 import Platform from "./components/Platform";
 import Player from "./components/Player";
-import { GameState, Movement } from "./utils/enum";
+import { GameState, Movement, PlatformType } from "./utils/enum";
 import { collisionDetection, getRandomInt } from "./utils/utils";
 import bgImage from "./assets/bg.png";
-import { platformDimensions } from "./Constants/constants";
+import { canvasDimension, platformDimensions } from "./Constants/constants";
 export default class GameManager {
   platforms?: Platform[];
   platformBaseLineY?: number;
@@ -25,6 +25,7 @@ export default class GameManager {
   bgImage: CanvasImageSource;
   username: string;
   offsetY?: number;
+  platformMinimumGap?: number;
   constructor(canvas: HTMLCanvasElement, username: string) {
     this.canvas = canvas;
     this.username = username;
@@ -32,7 +33,7 @@ export default class GameManager {
     this.x = 0;
     this.y = 0;
     // this.canvas.width = window.innerWidth;
-    this.canvas.width = 500;
+    this.canvas.width = canvasDimension.width;
     this.canvas.height = window.innerHeight - 10;
     this.groundHeight = 100;
 
@@ -44,7 +45,7 @@ export default class GameManager {
     this.bgImage.src = bgImage;
 
     //set player width and height
-    this.playerWidth = 70;
+    this.playerWidth = 60;
     this.playerHeight = 100;
 
     //set game state
@@ -97,7 +98,8 @@ export default class GameManager {
     this.platformBaseLineY = this.canvas.height - 2 * this.groundHeight;
 
     //the range for generating platform in y-axis
-    this.platformHorizontalGapRange = 150;
+    this.platformHorizontalGapRange = 100;
+    this.platformMinimumGap = 40;
     //set score to 0
     this.score = 0;
 
@@ -107,7 +109,8 @@ export default class GameManager {
       this.x,
       this.canvas.height - this.groundHeight,
       this.canvas.width,
-      this.groundHeight
+      this.groundHeight,
+      PlatformType.GROUND
     );
 
     //set score basis to ground
@@ -142,7 +145,9 @@ export default class GameManager {
         //get random X
         x = getRandomInt(this.x, this.canvas.width - this.playerWidth);
         y = getRandomInt(
-          this.platformBaseLineY! - this.platformHorizontalGapRange!,
+          this.platformBaseLineY! -
+            this.platformMinimumGap! -
+            this.platformHorizontalGapRange!,
           this.platformBaseLineY!
         );
 
@@ -171,13 +176,19 @@ export default class GameManager {
         //update baseline
         this.platformBaseLineY = y;
 
+        //choose platformType
+        let platformType = PlatformType.NORMAL;
+        if (this.score! > 5000 && noOfPlatformPerRange === 1) {
+          platformType = PlatformType.MOVING;
+        }
         this.platforms!.push(
           new Platform(
             this.context,
             x,
             y,
             platformDimensions.width,
-            platformDimensions.height
+            platformDimensions.height,
+            platformType
           )
         );
       }
@@ -349,6 +360,9 @@ export default class GameManager {
     if (this.gameState !== GameState.RUNNING) return;
     //update player
     this.player?.update();
+
+    //update platform
+    this.platforms?.forEach((platform) => platform.update());
 
     //check if player fell to ground
     if (this.ground && this.player!.y + this.player!.height >= this.ground.y) {
