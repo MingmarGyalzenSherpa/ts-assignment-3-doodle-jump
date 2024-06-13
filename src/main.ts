@@ -34,5 +34,5 @@ startBtn.addEventListener("click", () => {
   startScreen.style.display = "none";
   canvas.style.display = "block";
 
-  new GameManager(canvas!, name);
+  new GameManager(canvas!, userName);
 });
