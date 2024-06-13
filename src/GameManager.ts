@@ -3,17 +3,17 @@ import Player from "./components/Player";
 import { GameState, Movement } from "./utils/enum";
 import { collisionDetection, getRandomInt } from "./utils/utils";
 import bgImage from "./assets/bg.png";
-import { platformDimensions, playerDy } from "./Constants/constants";
+import { platformDimensions } from "./Constants/constants";
 export default class GameManager {
-  platforms: Platform[];
-  platformBaseLineY: number;
+  platforms?: Platform[];
+  platformBaseLineY?: number;
   canvas: HTMLCanvasElement;
   ground?: Platform;
   context: CanvasRenderingContext2D;
   groundHeight: number;
   minNoOfPlatformPerRange: number;
   maxNoOfPlatformPerRange: number;
-  platformHorizontalGapRange: number;
+  platformHorizontalGapRange?: number;
   x: number;
   y: number;
   score?: number;
@@ -23,26 +23,20 @@ export default class GameManager {
   playerWidth: number;
   playerHeight: number;
   bgImage: CanvasImageSource;
-
-  constructor(canvas: HTMLCanvasElement) {
+  username: string;
+  offsetY?: number;
+  constructor(canvas: HTMLCanvasElement, username: string) {
     this.canvas = canvas;
-    this.platforms = [];
+    this.username = username;
     this.context = this.canvas.getContext("2d")!;
     this.x = 0;
     this.y = 0;
     // this.canvas.width = window.innerWidth;
     this.canvas.width = 500;
-
     this.canvas.height = window.innerHeight - 10;
     this.groundHeight = 100;
 
-    //the initial baseline for platforms is twice the height of ground
-    this.platformBaseLineY = this.canvas.height - 2 * this.groundHeight;
-
-    //the range for generating platform in y-axis
-    this.platformHorizontalGapRange = 100;
-
-    this.minNoOfPlatformPerRange = 2;
+    this.minNoOfPlatformPerRange = 1;
     this.maxNoOfPlatformPerRange = 3;
 
     //set bg image
@@ -54,51 +48,20 @@ export default class GameManager {
     this.playerHeight = 100;
 
     //set game state
-    this.gameState = GameState.WAITING;
+    this.gameState = GameState.RUNNING;
 
-    //on resize change canvas width
-    document.addEventListener("resize", () => {
-      this.canvas.width = window.innerWidth;
-      this.canvas.height = window.innerHeight - 10;
-    });
+    this.initialSetup();
+    // //on resize change canvas width
+    // document.addEventListener("resize", () => {
+    //   this.canvas.width = window.innerWidth;
+    //   this.canvas.height = window.innerHeight - 10;
+    // });
 
     //event listener for game
     document.addEventListener("keydown", (e) => {
       if (e.code === "Space") {
         if (this.gameState === GameState.RUNNING) return;
-        ///set game state to running
-        this.gameState = GameState.RUNNING;
-
-        //set score to 0
-        this.score = 0;
-
-        //generate ground
-        this.ground = new Platform(
-          this.context,
-          this.x,
-          this.canvas.height - this.groundHeight,
-          this.canvas.width,
-          this.groundHeight
-        );
-
-        //set score basis to ground
-        this.scoreBasis = this.ground;
-
-        //generate a new Player with random x and y
-
-        this.player = new Player(
-          this.context,
-          getRandomInt(this.x, this.canvas.width - this.playerWidth),
-          this.ground!.y - this.playerHeight,
-          this.playerWidth,
-          this.playerHeight
-        );
-
-        //generate platforms
-        this.generatePlatform(-this.canvas.height);
-
-        //increase the gap for other platforms
-        this.platformHorizontalGapRange = 130;
+        this.initialSetup();
       }
 
       //event listener logic when game is running
@@ -125,24 +88,66 @@ export default class GameManager {
     requestAnimationFrame(this.start);
   }
 
+  initialSetup = () => {
+    ///set game state to running
+    this.gameState = GameState.RUNNING;
+    this.platforms = [];
+
+    //the initial baseline for platforms is twice the height of ground
+    this.platformBaseLineY = this.canvas.height - 2 * this.groundHeight;
+
+    //the range for generating platform in y-axis
+    this.platformHorizontalGapRange = 100;
+    //set score to 0
+    this.score = 0;
+
+    //generate ground
+    this.ground = new Platform(
+      this.context,
+      this.x,
+      this.canvas.height - this.groundHeight,
+      this.canvas.width,
+      this.groundHeight
+    );
+
+    //set score basis to ground
+    this.scoreBasis = this.ground;
+
+    //generate a new Player with random x and y
+
+    this.player = new Player(
+      this.context,
+      getRandomInt(this.x, this.canvas.width - this.playerWidth),
+      this.ground!.y - this.playerHeight,
+      this.playerWidth,
+      this.playerHeight
+    );
+
+    //generate platforms
+    this.generatePlatform(-this.canvas.height);
+
+    //increase the gap for other platforms
+    this.platformHorizontalGapRange = 90;
+  };
+
   generatePlatform = (yMin: number) => {
     let noOfPlatformPerRange = getRandomInt(
       this.minNoOfPlatformPerRange,
       this.maxNoOfPlatformPerRange
     );
     let x: number, y: number;
-    while (this.platformBaseLineY >= yMin) {
+    while (this.platformBaseLineY! >= yMin) {
       console.log("inside generate");
       for (let i = 1; i <= noOfPlatformPerRange; i++) {
         //get random X
         x = getRandomInt(this.x, this.canvas.width - this.playerWidth);
         y = getRandomInt(
-          this.platformBaseLineY - this.platformHorizontalGapRange,
-          this.platformBaseLineY
+          this.platformBaseLineY! - this.platformHorizontalGapRange!,
+          this.platformBaseLineY!
         );
         //if collides generate again
         while (
-          this.platforms.some((platform) => {
+          this.platforms!.some((platform) => {
             if (
               platform.x <= x + platformDimensions.width &&
               platform.x + platform.width >= x &&
@@ -157,12 +162,12 @@ export default class GameManager {
         ) {
           x = getRandomInt(this.x, this.canvas.width - this.playerWidth);
           y = getRandomInt(
-            this.platformBaseLineY - this.platformHorizontalGapRange,
-            this.platformBaseLineY
+            this.platformBaseLineY! - this.platformHorizontalGapRange!,
+            this.platformBaseLineY!
           );
         }
 
-        this.platforms.push(
+        this.platforms!.push(
           new Platform(
             this.context,
             x,
@@ -172,7 +177,7 @@ export default class GameManager {
           )
         );
       }
-      this.platformBaseLineY -= this.platformHorizontalGapRange;
+      this.platformBaseLineY! -= this.platformHorizontalGapRange!;
     }
   };
 
@@ -191,8 +196,96 @@ export default class GameManager {
       case GameState.PAUSED:
         break;
       case GameState.END:
+        this.endGameStateRender();
         break;
     }
+  };
+  endGameStateRender = () => {
+    this.context.clearRect(
+      this.x,
+      this.y,
+      this.canvas.width,
+      this.canvas.height
+    );
+
+    //draw background
+    this.context.drawImage(
+      this.bgImage,
+      this.x,
+      this.y,
+      this.canvas.width,
+      this.canvas.height
+    );
+
+    //draw player
+    this.player!.draw();
+
+    console.log(this.offsetY);
+    if (this.offsetY! > 0) {
+      console.log("hey");
+      console.log(this.platforms);
+      this.platforms?.forEach((platform) => {
+        platform.y -= 8;
+      });
+      this.offsetY!--;
+    }
+
+    this.platforms!.forEach((platform) => {
+      platform.draw();
+    });
+
+    //draw high score
+    if (this.offsetY! < 0) {
+      this.calculateScore();
+    }
+  };
+
+  calculateScore = () => {
+    const leaderBoarListEl = document.querySelector<HTMLOListElement>(
+      ".leader-board__list"
+    );
+    leaderBoarListEl!.innerHTML = "";
+    let scoreDetail = { name: this.username, score: this.score! };
+    let leaderBoardJSON = localStorage.getItem("leaderboard");
+    let leaderBoardArr: { name: string; score: number }[];
+
+    //if theres nothing then store new
+    if (!leaderBoardJSON) {
+      leaderBoardArr = [scoreDetail];
+      localStorage.setItem("leaderboard", JSON.stringify(leaderBoardArr));
+      return;
+    }
+
+    //if there is then find if the user is already there and leaderbord score is higher than current
+    leaderBoardArr = JSON.parse(leaderBoardJSON);
+    if (
+      leaderBoardArr.some(
+        (scoreInfo) =>
+          scoreDetail.name === scoreInfo.name &&
+          scoreDetail.score < scoreInfo.score
+      )
+    )
+      return;
+
+    // if cur score is higher ,remove the scoreInfo
+    leaderBoardArr = leaderBoardArr.filter(
+      (scoreInfo) => scoreDetail.name != scoreInfo.name
+    );
+    leaderBoardArr.push(scoreDetail);
+
+    leaderBoardArr.sort(
+      (scoreInfo1, scoreInfo2) => scoreInfo2.score - scoreInfo1.score
+    );
+
+    leaderBoardArr = leaderBoardArr.filter((_, i) => i < 10);
+
+    localStorage.setItem("leaderboard", JSON.stringify(leaderBoardArr));
+
+    leaderBoardArr.forEach((scoreInfo) => {
+      let listEl = document.createElement("li");
+      listEl.textContent = `${scoreInfo.name} ${scoreInfo.score}`;
+      leaderBoarListEl?.appendChild(listEl);
+    });
   };
 
   waitingStateRender = () => {
@@ -231,7 +324,7 @@ export default class GameManager {
     if (this.ground) this.ground.draw();
 
     //draw platforms
-    this.platforms.forEach((platform) => {
+    this.platforms!.forEach((platform) => {
       platform.draw();
     });
 
@@ -275,15 +368,23 @@ export default class GameManager {
     this.removeOutOfBoundaryPlatform();
 
     //generate platforms
-    if (this.platformBaseLineY > -10) {
+    if (this.platformBaseLineY! > -10) {
       this.generatePlatform(-this.groundHeight);
+    }
+
+    //move screen down
+
+    //check game over
+    if (this.player!.y + this.player!.height > this.canvas.height) {
+      this.offsetY = this.score! / 50;
+      this.gameState = GameState.END;
     }
   };
 
   movePlatformsAndBaseYDown() {
     //if platform player is on half of height then move platform nd ground down
     if (this.player!.y < (1 / 3) * this.canvas.height) {
-      this.platforms.forEach((platform) => {
+      this.platforms!.forEach((platform) => {
         if (this.player!.y > this.y + 100) {
           platform.y += 10;
         } else {
@@ -292,7 +393,7 @@ export default class GameManager {
       });
       if (this.ground) this.ground.y += 10;
       //reset platformBaseLine
-      this.platformBaseLineY += this.player!.y > this.y + 50 ? 10 : 20;
+      this.platformBaseLineY! += this.player!.y > this.y + 50 ? 10 : 20;
     }
   }
 
@@ -301,7 +402,7 @@ export default class GameManager {
       this.ground = undefined;
     }
 
-    this.platforms = this.platforms.filter(
+    this.platforms = this.platforms!.filter(
       (platform) => platform.y < this.canvas.height
     );
   }
@@ -311,11 +412,11 @@ export default class GameManager {
 
     //collision between player and platforms
     if (this.player!.dy >= 0) {
-      this.platforms.forEach((platform) => {
+      this.platforms!.forEach((platform) => {
         if (collisionDetection(this.player!, platform)) {
           this.player!.y = platform.y - this.player!.height;
           this.player!.resetDy(
-            this.player!.y < (1 / 3) * this.canvas.height ? -6 : -15
+            this.player!.y < (1 / 3) * this.canvas.height ? -1 : -15
           );
           this.updateScore(platform);
         }

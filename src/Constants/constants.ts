@@ -1,6 +1,6 @@
-export let playerDy = -15;
+export let playerDy = -19;
 
 export const platformDimensions = {
   width: 80,
-  height: 15,
+  height: 20,
 };

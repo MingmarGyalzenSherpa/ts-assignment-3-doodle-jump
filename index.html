@@ -8,7 +8,26 @@
     <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
-    <canvas id="canvas"></canvas>
+    <div class="canvas-container">
+      <canvas id="canvas" style="display: none"> </canvas>
+      <div class="start-screen">
+        <span class="start-screen__title">Welcome to doodle jump</span>
+        <input
+          type="text"
+          name=""
+          class="username"
+          placeholder="Enter your username"
+        />
+        <button class="start-btn">Start</button>
+      </div>
+      <div class="leader-board">
+        <span class="leader-board__title"> Leader Board</span>
+        <ol class="leader-board__list">
+          
+        </ol>
+      </div>
+    </div>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
