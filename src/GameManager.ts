@@ -258,7 +258,30 @@ export default class GameManager {
       platform.draw();
     });
 
-    //draw high score
+    //draw game over
+    this.context.fillStyle = "red";
+    this.context.font = "50px bold sans-serif";
+    this.context.fillText(
+      "GAME OVER!!",
+      this.canvas.width / 5,
+      this.canvas.height / 3
+    );
+    this.context.fillStyle = "white";
+    this.context.fillText(
+      `Score : ${this.score}`,
+      this.canvas.width / 4,
+      this.canvas.height / 3 + 100
+    );
+
+    this.context.fillStyle = "green";
+    this.context.font = "30px bold sans-serif";
+    this.context.fillText(
+      "Press SPACE to start again",
+      this.canvas.width / 6,
+      this.canvas.height / 3 + 200
+    );
+
+    //calculate  score
     if (this.offsetY! < 0) {
       this.calculateScore();
     }
