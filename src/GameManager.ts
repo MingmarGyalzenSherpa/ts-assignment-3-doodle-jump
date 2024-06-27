@@ -94,7 +94,7 @@ export default class GameManager {
 
     //the range for generating platform in y-axis
     this.platformHorizontalGapRange = 20;
-    this.platformMinimumGap = 40;
+    this.platformMinimumGap = 10;
     //set score to 0
     this.score = 0;
 
